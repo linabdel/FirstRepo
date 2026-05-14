@@ -1,0 +1,38 @@
+```yaml
+name: Gemini Pattern Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern_name:
+        description: 'Which pattern should I generate?'
+        required: true
+        default: 'Circuit Breaker'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install google-generativeai
+
+      - name: Run Agent Logic
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python generate_pattern.py "${{ github.event.inputs.pattern_name }}"
+
+      - name: Commit Pattern to Repo
+        run: |
+          git config --global user.name "Gemini-Agent-Bot"
+          git config --global user.email "actions@github.com"
+          git add patterns/*.md
+          git commit -m "Docs: Gemini generated ${{ github.event.inputs.pattern_name }}"
+          git push
