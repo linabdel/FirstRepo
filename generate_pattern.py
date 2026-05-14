@@ -1,6 +1,6 @@
 import os
 import sys
-import google.genai as genai
+import google.generativeai as genai
 
 # Setup Gemini API
 api_key = os.getenv("GEMINI_API_KEY")
